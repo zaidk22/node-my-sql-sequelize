@@ -1,5 +1,5 @@
 const express = require('express');
-const { body } = require('express-validator');
+const validators = require('../validations/authValidations');
 
 const authController = require('../controllers/auth_controller');
 
@@ -7,14 +7,12 @@ const authController = require('../controllers/auth_controller');
 const router = express.Router();
 
 
-router.put('/signup', [
-    body('email').isEmail()
-        .withMessage('Please enter a valid email')
-
-], authController.signup);
+router.put('/signup',
+    validators.emailValidation
+    , authController.signup);
 
 router.post('/signin',
-authController.signin
+    authController.signin
 );
 module.exports = router;
 

@@ -26,50 +26,50 @@ function save(req, res) {
 
 async function show(req, res) {
     const id = req.params.id;
-  
-        const result = await models.Post.findByPk(id);
-        if (result) {
-            res.status(200).json({
-                message: "success",
-                post: result
-            });
-        }
-        else {
-            res.status(404).json({
-                message: "records not found",
-            
-            });
-        }
-    }
 
- 
-
-    async function index(req, res) {
-        const page = req.query.page || 1; // Default to page 1 if not specified
-        const perPage = 1; // Adjust the number of items per page as needed
-    
-        try {
-            const offset = (page - 1) * perPage;
-            const result = await models.Post.findAndCountAll({
-                offset: offset,
-                limit: perPage,
-                
-            });
-    
-            res.status(200).json({
-                message: "success",
-                post: result.rows, // Use result.rows to get the actual data
-                totalItems: result.count,
-                perPage:perPage // Use result.count to get the total count
-            });
-        } catch (e) {
-            res.status(500).json({
-                message: "error",
-                error: e,
-            });
-        }
+    const result = await models.Post.findByPk(id);
+    if (result) {
+        res.status(200).json({
+            message: "success",
+            post: result
+        });
     }
-    
+    else {
+        res.status(404).json({
+            message: "records not found",
+
+        });
+    }
+}
+
+
+
+async function index(req, res) {
+    const page = req.query.page || 1; // Default to page 1 if not specified
+    const perPage = req.query.perPage||1; // Adjust the number of items per page as needed
+
+    try {
+        const offset = (page - 1) * perPage;
+        const result = await models.Post.findAndCountAll({
+            offset: offset,
+            limit: +perPage,
+
+        });
+
+        res.status(200).json({
+            message: "success",
+            post: result.rows, // Use result.rows to get the actual data
+            totalItems: result.count,
+            perPage: +perPage // Use result.count to get the total count
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: "error",
+            error: e,
+        });
+    }
+}
+
 
 
 
