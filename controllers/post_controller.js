@@ -44,25 +44,35 @@ async function show(req, res) {
 
  
 
-
-
-
-
-async function index(req, res) {
-    try {
-        const result = await models.Post.findAll();
-        res.status(200).json({
-            message: "success",
-            post: result
-        });
+    async function index(req, res) {
+        const page = req.query.page || 1; // Default to page 1 if not specified
+        const perPage = 1; // Adjust the number of items per page as needed
+    
+        try {
+            const offset = (page - 1) * perPage;
+            const result = await models.Post.findAndCountAll({
+                offset: offset,
+                limit: perPage,
+                
+            });
+    
+            res.status(200).json({
+                message: "success",
+                post: result.rows, // Use result.rows to get the actual data
+                totalItems: result.count,
+                perPage:perPage // Use result.count to get the total count
+            });
+        } catch (e) {
+            res.status(500).json({
+                message: "error",
+                error: e,
+            });
+        }
     }
-    catch (e) {
-        res.status(500).json({
-            message: "error ",
-            error: e
-        });
-    }
-}
+    
+
+
+
 
 async function update(req, res) {
     const postId = req.params.id;
