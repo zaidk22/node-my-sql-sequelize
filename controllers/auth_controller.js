@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const models = require('../models');
 async function signup(req, res) {
     const errors = validationResult(req);
@@ -29,7 +30,7 @@ async function signup(req, res) {
                 user: user
             });
         }
-        else{
+        else {
             res.status(401).json({
                 message: "Email already in use",
                 user: user
@@ -51,19 +52,35 @@ async function signin(req, res,) {
     const email = req.body.email;
     const password = req.body.password;
 
-  const isUserExist = await  models.User.findOne({where :{email:email}});
-   if(!isUserExist){
-    res.status(201).json({
-        message: "User not found ",
-        user: user
+    const user = await models.User.findOne({ where: { email: email } });
+    if (!user) {
+        res.status(401).json({
+            message: "User with this email not found ",
+
+        });
+    }
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+        res.status(401).json({
+            message: "Invalid password",
+
+        });
+
+    }
+    const token = jwt.sign({
+        email: user.email,
+        userId: user.userId
+    }, 'secret-key', { expiresIn: '1h' });
+    res.status(200).json({
+        message: "success",
+        user: user,
+        token: token
+
+
     });
-   }
-   // bcrypt.compare(password, req.password);
-    // const token = jwt.sign({
-    //     email: loadedUser.email,
-    //     userId: loadedUser._id.toString()
-    // }, 'secret-key', { expiresIn: '1h' });
-   
+
+
+
 
 }
 
