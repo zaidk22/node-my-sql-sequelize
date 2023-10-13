@@ -7,6 +7,7 @@ const authController = require('../controllers/auth_controller');
 const router = express.Router();
 
 
+
 router.put('/signup',
     validators.emailValidation
     , authController.signup);
