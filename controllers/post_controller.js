@@ -8,7 +8,7 @@ function save(req, res) {
         content: req.body.content,
         imageUrl: req.body.imageUrl,
         categoryId: req.body.categoryId,
-        userId: req.userData.userId 
+        userId: req.userData.userId
     }
     models.Category.findByPk(req.body.categoryId);
     models.Post.create(post).then(result => {
@@ -47,16 +47,18 @@ async function show(req, res) {
 
 
 async function index(req, res) {
-  
+
     const page = req.query.page || 1; // Default to page 1 if not specified
-    const perPage = req.query.perPage||10; // Adjust the number of items per page as needed
+    const perPage = req.query.perPage || 10; // Adjust the number of items per page as needed
 
     try {
         const offset = (page - 1) * perPage;
         const result = await models.Post.findAndCountAll({
-            where: { userId :req.userData.userId}, 
+            where: { userId: req.userData.userId },
             offset: offset,
             limit: +perPage,
+            order: [['createdAt', 'DESC']] 
+
 
         });
 

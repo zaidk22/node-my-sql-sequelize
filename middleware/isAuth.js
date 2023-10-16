@@ -15,13 +15,17 @@ module.exports = (req, res, next) => {
     try {
 
         decodeToken = jwt.verify(token, 'secret-key',);
-        console.log("toj ",decodeToken);
+    
 
     }
     catch (err) {
-        err.statusCode = 403;
-        err.message = "Token expired";
-        throw err;
+    
+        // err.statusCode = 403;
+        // err.message = "Token expired";
+        // throw err;
+        res.status(403).json({message:"Token expired",
+    statusCode:403
+    });
     }
 
     if (!decodeToken) {
