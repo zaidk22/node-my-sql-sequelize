@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
         // const error = new Error('Not authenticated');
         // error.statusCode = 401;
         // throw error;
-        res.status(401).json({message:"Not authenticated"});
+        res.status(401).json({ message: "Not authenticated" });
     }
     const token = authHeader.split(' ')[1];
     let decodeToken;
@@ -15,17 +15,14 @@ module.exports = (req, res, next) => {
     try {
 
         decodeToken = jwt.verify(token, 'secret-key',);
-    
+
 
     }
     catch (err) {
+
+        next(err);
+        err.statusCode = 403;
     
-        // err.statusCode = 403;
-        // err.message = "Token expired";
-        // throw err;
-        res.status(403).json({message:"Token expired",
-    statusCode:403
-    });
     }
 
     if (!decodeToken) {
@@ -34,7 +31,7 @@ module.exports = (req, res, next) => {
         throw error;
     }
 
-    req.userData= decodeToken;
+    req.userData = decodeToken;
 
     next();
 }
